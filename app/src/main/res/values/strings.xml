@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">ShoppoGen</string>
+
+    <string name="add_product">Add Product</string>
+    <string name="add_coupon">Add Coupon</string>
+    <string name="list_data">List All Data</string>
+    <string name="go_shopping">Let\'s Go Shopping</string>
+    <string name="reset_system">Reset System</string>
+    <string name="title_activity_list_data">ListDataActivity</string>
 </resources>
