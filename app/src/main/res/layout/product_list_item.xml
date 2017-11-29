@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp">
+
+    <CheckBox
+        android:id="@+id/cb_product_update"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="57" />
+
+    <TextView
+        android:id="@+id/tv_product_name"
+        style="@style/TextAppearance.AppCompat.Title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:fontFamily="monospace"
+        android:textSize="14sp"
+        android:textColor="#000"
+        android:text="Product Name"
+        android:layout_weight="28" />
+
+    <EditText
+        android:id="@+id/et_product_price"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:fontFamily="monospace"
+        android:inputType="numberDecimal"
+        style="@style/Widget.AppCompat.EditText"
+        android:text="124.99"
+        android:layout_weight="45"
+        android:textSize="14sp" />
+</LinearLayout>
