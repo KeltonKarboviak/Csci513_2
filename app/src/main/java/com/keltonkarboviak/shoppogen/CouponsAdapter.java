@@ -1,6 +1,7 @@
 package com.keltonkarboviak.shoppogen;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
+import com.keltonkarboviak.shoppogen.DB.ShoppoContract;
 import com.keltonkarboviak.shoppogen.Models.Coupon;
 
 import java.util.List;
@@ -19,12 +21,18 @@ import java.util.List;
 
 public class CouponsAdapter extends RecyclerView.Adapter<CouponsAdapter.CouponsAdapterViewHolder>
 {
+    private Context mContext;
+
+    private Cursor mCursor;
+
     private List<Coupon> mCouponList;
 
     private int lastSelectedPosition = -1;
 
-    public CouponsAdapter()
+    public CouponsAdapter(Context context, Cursor cursor)
     {
+        this.mContext = context;
+        this.mCursor = cursor;
     }
 
     @Override
@@ -54,9 +62,27 @@ public class CouponsAdapter extends RecyclerView.Adapter<CouponsAdapter.CouponsA
     @Override
     public int getItemCount()
     {
-        return mCouponList == null
-            ? 0
-            : mCouponList.size();
+        return mCursor.getCount();
+    }
+
+    public Coupon getSelectedCoupon()
+    {
+        return lastSelectedPosition != -1 && lastSelectedPosition < mCouponList.size()
+            ? mCouponList.get(lastSelectedPosition)
+            : null;
+    }
+
+    public void swapCursor(Cursor newCursor)
+    {
+        if (mCursor != null) {
+            mCursor.close();
+        }
+
+        mCursor = newCursor;
+
+        if (mCursor != null) {
+            this.notifyDataSetChanged();
+        }
     }
 
     public void setCouponData(List<Coupon> coupons)
@@ -91,15 +117,19 @@ public class CouponsAdapter extends RecyclerView.Adapter<CouponsAdapter.CouponsA
 
         public void bind(int position)
         {
-            Coupon coupon = mCouponList.get(position);
+            if (!mCursor.moveToPosition(position)) {
+                return;
+            }
+
+            long id = mCursor.getLong(mCursor.getColumnIndex(ShoppoContract.CouponEntry._ID));
+
+            this.itemView.setTag(id);
 
             // Since only one radio button is allowed to be selected, this condition un-checks
             // previous selections
             mCouponRadioBtn.setChecked(lastSelectedPosition == position);
 
-            mCouponIdTextView.setText(
-                String.valueOf(coupon.getId())
-            );
+            mCouponIdTextView.setText(String.valueOf(id));
         }
     }
 }

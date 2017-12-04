@@ -1,6 +1,7 @@
 package com.keltonkarboviak.shoppogen;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.keltonkarboviak.shoppogen.DB.ShoppoContract;
 import com.keltonkarboviak.shoppogen.Models.Product;
 
 import java.util.List;
@@ -20,10 +22,16 @@ import java.util.List;
 
 public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ProductsAdapterViewHolder>
 {
+    private Context mContext;
+
+    private Cursor mCursor;
+
     private List<Product> mProductList;
 
-    public ProductsAdapter()
+    public ProductsAdapter(Context context, Cursor cursor)
     {
+        this.mContext = context;
+        this.mCursor = cursor;
     }
 
     @Override
@@ -53,9 +61,20 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.Produc
     @Override
     public int getItemCount()
     {
-        return mProductList == null
-            ? 0
-            : mProductList.size();
+        return mCursor.getCount();
+    }
+
+    public void swapCursor(Cursor newCursor)
+    {
+        if (mCursor != null) {
+            mCursor.close();
+        }
+
+        mCursor = newCursor;
+
+        if (mCursor != null) {
+            this.notifyDataSetChanged();
+        }
     }
 
     public void setProductData(List<Product> products)
@@ -83,10 +102,15 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.Produc
 
         public void bind(int position)
         {
-            Product product = mProductList.get(position);
+            if (!mCursor.moveToPosition(position)) {
+                return;
+            }
 
-            mProductNameTextView.setText(product.getName());
-            mProductPriceEditText.setText(String.format("%01.2f", product.getPrice()));
+            String productName = mCursor.getString(mCursor.getColumnIndex(ShoppoContract.ProductEntry.COLUMN_PRODUCT_NAME));
+            double productPrice = mCursor.getDouble(mCursor.getColumnIndex(ShoppoContract.ProductEntry.COLUMN_PRODUCT_PRICE));
+
+            mProductNameTextView.setText(productName);
+            mProductPriceEditText.setText(String.format("%01.2f", productPrice));
         }
     }
 }
