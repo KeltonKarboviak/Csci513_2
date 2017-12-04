@@ -50,7 +50,7 @@ public class ListDataActivity extends AppCompatActivity
         /**
          * Setup Products
          */
-//      mProductsRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_products);
+        mProductsRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_products);
         mProductsRecyclerView.setLayoutManager(new LinearLayoutManager(
             this,
             LinearLayoutManager.VERTICAL,
@@ -64,7 +64,7 @@ public class ListDataActivity extends AppCompatActivity
         /**
          * Setup Coupons
          */
-//      mCouponsRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_coupons);
+        mCouponsRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_coupons);
         mCouponsRecyclerView.setLayoutManager(new LinearLayoutManager(
             this,
             LinearLayoutManager.VERTICAL,
