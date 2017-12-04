@@ -18,7 +18,7 @@ public class DbHelper extends SQLiteOpenHelper
 
     private static final String DATABASE_NAME = "shoppogen.db";
 
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 5;
 
     public DbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -27,8 +27,8 @@ public class DbHelper extends SQLiteOpenHelper
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase)
     {
-        /**
-         * Setup Coupons Table
+        /*
+          Setup Coupons Table
          */
         String SQL_CREATE_COUPONS_TABLE = "CREATE TABLE " + CouponEntry.TABLE_NAME + " (" +
             CouponEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -38,8 +38,8 @@ public class DbHelper extends SQLiteOpenHelper
 
         Log.d(TAG, SQL_CREATE_COUPONS_TABLE);
 
-        /**
-         * Setup Products Table
+        /*
+          Setup Products Table
          */
         String SQL_CREATE_PRODUCTS_TABLE = "CREATE TABLE " + ProductEntry.TABLE_NAME + " (" +
             ProductEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -50,15 +50,17 @@ public class DbHelper extends SQLiteOpenHelper
 
         Log.d(TAG, SQL_CREATE_PRODUCTS_TABLE);
 
-        /**
-         * Setup CouponsProducts Table
+        /*
+          Setup CouponsProducts Table
          */
         String SQL_CREATE_COUPONS_PRODUCTS_TABLE = "CREATE TABLE " + CouponProductEntry.TABLE_NAME + " (" +
             CouponProductEntry.COLUMN_COUPON_ID + " INTEGER NOT NULL, " +
             CouponProductEntry.COLUMN_PRODUCT_ID + " INTEGER NOT NULL, " +
-            "PRIMARY KEY (" + CouponProductEntry.COLUMN_COUPON_ID + ", " + CouponProductEntry.COLUMN_PRODUCT_ID + ")," +
-            "FOREIGN KEY (" + CouponProductEntry.COLUMN_COUPON_ID + ") REFERENCES " + CouponEntry.TABLE_NAME + "(" + CouponEntry._ID + ")," +
-            "FOREIGN KEY (" + CouponProductEntry.COLUMN_PRODUCT_ID + ") REFERENCES " + ProductEntry.TABLE_NAME + "(" + ProductEntry._ID + ")" +
+            "PRIMARY KEY (" + CouponProductEntry.COLUMN_COUPON_ID + ", " + CouponProductEntry.COLUMN_PRODUCT_ID + "), " +
+            "FOREIGN KEY (" + CouponProductEntry.COLUMN_COUPON_ID + ") REFERENCES " + CouponEntry.TABLE_NAME + "(" + CouponEntry._ID + "), " +
+            "FOREIGN KEY (" + CouponProductEntry.COLUMN_PRODUCT_ID + ") REFERENCES " + ProductEntry.TABLE_NAME + "(" + ProductEntry._ID + ") " +
+            "  ON UPDATE CASCADE " +
+            "  ON DELETE CASCADE " +
             ");";
         sqLiteDatabase.execSQL(SQL_CREATE_COUPONS_PRODUCTS_TABLE);
 
