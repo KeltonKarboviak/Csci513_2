@@ -18,7 +18,7 @@ public class DbHelper extends SQLiteOpenHelper
 
     private static final String DATABASE_NAME = "shoppogen.db";
 
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     public DbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -27,6 +27,9 @@ public class DbHelper extends SQLiteOpenHelper
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase)
     {
+        /**
+         * Setup Coupons Table
+         */
         String SQL_CREATE_COUPONS_TABLE = "CREATE TABLE " + CouponEntry.TABLE_NAME + " (" +
             CouponEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
             CouponEntry.COLUMN_COUPON_DISCOUNT + " DECIMAL(5, 2) NOT NULL" +
@@ -35,14 +38,20 @@ public class DbHelper extends SQLiteOpenHelper
 
         Log.d(TAG, SQL_CREATE_COUPONS_TABLE);
 
+        /**
+         * Setup Products Table
+         */
         String SQL_CREATE_PRODUCTS_TABLE = "CREATE TABLE " + ProductEntry.TABLE_NAME + " (" +
-            ProductEntry.COLUMN_PRODUCT_NAME + " TEXT NOT NULL, " +
+            ProductEntry.COLUMN_PRODUCT_NAME + " TEXT PRIMARY KEY, " +
             ProductEntry.COLUMN_PRODUCT_PRICE + " DECIMAL(5, 2) NOT NULL" +
             ");";
         sqLiteDatabase.execSQL(SQL_CREATE_PRODUCTS_TABLE);
 
         Log.d(TAG, SQL_CREATE_PRODUCTS_TABLE);
 
+        /**
+         * Setup CouponsProducts Table
+         */
         String SQL_CREATE_COUPONS_PRODUCTS_TABLE = "CREATE TABLE " + CouponProductEntry.TABLE_NAME + " (" +
             CouponProductEntry.COLUMN_COUPON_ID + " INTEGER NOT NULL, " +
             CouponProductEntry.COLUMN_PRODUCT_ID + " TEXT NOT NULL, " +
