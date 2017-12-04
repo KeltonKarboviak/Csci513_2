@@ -3,16 +3,19 @@ package com.keltonkarboviak.shoppogen;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.keltonkarboviak.shoppogen.DB.ShoppoContract;
 import com.keltonkarboviak.shoppogen.Models.Product;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -31,7 +34,8 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.Produc
     public ProductsAdapter(Context context, Cursor cursor)
     {
         this.mContext = context;
-        this.mCursor = cursor;
+
+        swapCursor(cursor);
     }
 
     @Override
@@ -47,9 +51,12 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.Produc
             viewGroup,
             shouldAttachToParentImmediately
         );
-        ProductsAdapterViewHolder viewHolder = new ProductsAdapterViewHolder(view);
 
-        return viewHolder;
+        return new ProductsAdapterViewHolder(
+            view,
+            new PositionAwareEditTextListener(),
+            new PositionAwareOnCheckChangeListener()
+        );
     }
 
     @Override
@@ -64,6 +71,22 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.Produc
         return mCursor.getCount();
     }
 
+    public List<Product> getAllProducts()
+    {
+        return mProductList;
+    }
+
+    public List<Product> getCheckedProducts()
+    {
+        List<Product> productsChecked = new ArrayList<>();
+        for (Product p : mProductList) {
+            if (p.isChecked()) {
+                productsChecked.add(p);
+            }
+        }
+        return productsChecked;
+    }
+
     public void swapCursor(Cursor newCursor)
     {
         if (mCursor != null) {
@@ -71,16 +94,14 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.Produc
         }
 
         mCursor = newCursor;
+        mProductList = new ArrayList<>();
 
         if (mCursor != null) {
+            while (mCursor.moveToNext()) {
+                mProductList.add(Product.fromCursor(mCursor));
+            }
             this.notifyDataSetChanged();
         }
-    }
-
-    public void setProductData(List<Product> products)
-    {
-        mProductList = products;
-        notifyDataSetChanged();
     }
 
     class ProductsAdapterViewHolder extends RecyclerView.ViewHolder
@@ -91,26 +112,92 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.Produc
 
         public final EditText mProductPriceEditText;
 
-        public ProductsAdapterViewHolder(View itemView)
+        public final PositionAwareEditTextListener mPositionAwareEditTextListener;
+
+        public final PositionAwareOnCheckChangeListener mPositionAwareOnCheckChangeListener;
+
+        public ProductsAdapterViewHolder(
+            View itemView,
+            PositionAwareEditTextListener editTextListener,
+            PositionAwareOnCheckChangeListener checkChangeListener)
         {
             super(itemView);
 
             mProductCheckBox = (CheckBox) itemView.findViewById(R.id.cb_product_update);
             mProductNameTextView = (TextView) itemView.findViewById(R.id.tv_product_name);
             mProductPriceEditText = (EditText) itemView.findViewById(R.id.et_product_price);
+            mPositionAwareEditTextListener = editTextListener;
+            mPositionAwareOnCheckChangeListener = checkChangeListener;
+
+            mProductCheckBox.setOnCheckedChangeListener(mPositionAwareOnCheckChangeListener);
+            mProductPriceEditText.addTextChangedListener(mPositionAwareEditTextListener);
         }
 
         public void bind(int position)
         {
-            if (!mCursor.moveToPosition(position)) {
+            if (position >= mProductList.size()) {
                 return;
             }
 
-            String productName = mCursor.getString(mCursor.getColumnIndex(ShoppoContract.ProductEntry.COLUMN_PRODUCT_NAME));
-            double productPrice = mCursor.getDouble(mCursor.getColumnIndex(ShoppoContract.ProductEntry.COLUMN_PRODUCT_PRICE));
+            final int pos = this.getAdapterPosition();
 
+            mPositionAwareEditTextListener.updatePosition(pos);
+            mPositionAwareOnCheckChangeListener.updatePosition(pos);
+
+            Product product = mProductList.get(pos);
+
+            String productName = product.getName();
+            double productPrice = product.getPrice();
+
+            mProductCheckBox.setChecked(product.isChecked());
             mProductNameTextView.setText(productName);
             mProductPriceEditText.setText(String.format("%01.2f", productPrice));
+        }
+    }
+
+
+    private class PositionAwareEditTextListener implements TextWatcher
+    {
+        private int position;
+
+        public void updatePosition(int position)
+        {
+            this.position = position;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
+
+        @Override
+        public void onTextChanged(
+            CharSequence charSequence,
+            int start,
+            int before,
+            int count)
+        {
+            mProductList.get(position)
+                        .setPrice(Double.parseDouble(charSequence.toString()));
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) { }
+    }
+
+
+    private class PositionAwareOnCheckChangeListener
+        implements CompoundButton.OnCheckedChangeListener
+    {
+        private int position;
+
+        public void updatePosition(int position)
+        {
+            this.position = position;
+        }
+
+        @Override
+        public void onCheckedChanged(CompoundButton compoundButton, boolean b)
+        {
+            mProductList.get(position).setChecked(b);
         }
     }
 }

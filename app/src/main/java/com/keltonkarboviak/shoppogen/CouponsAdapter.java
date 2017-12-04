@@ -9,9 +9,9 @@ import android.view.ViewGroup;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
-import com.keltonkarboviak.shoppogen.DB.ShoppoContract;
 import com.keltonkarboviak.shoppogen.Models.Coupon;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -32,7 +32,8 @@ public class CouponsAdapter extends RecyclerView.Adapter<CouponsAdapter.CouponsA
     public CouponsAdapter(Context context, Cursor cursor)
     {
         this.mContext = context;
-        this.mCursor = cursor;
+
+        swapCursor(cursor);
     }
 
     @Override
@@ -48,9 +49,8 @@ public class CouponsAdapter extends RecyclerView.Adapter<CouponsAdapter.CouponsA
             viewGroup,
             shouldAttachToParentImmediately
         );
-        CouponsAdapterViewHolder viewHolder = new CouponsAdapterViewHolder(view);
 
-        return viewHolder;
+        return new CouponsAdapterViewHolder(view);
     }
 
     @Override
@@ -59,10 +59,15 @@ public class CouponsAdapter extends RecyclerView.Adapter<CouponsAdapter.CouponsA
         holder.bind(position);
     }
 
+    public void resetSelectedPosition()
+    {
+        this.lastSelectedPosition = -1;
+    }
+
     @Override
     public int getItemCount()
     {
-        return mCursor.getCount();
+        return mCouponList.size();
     }
 
     public Coupon getSelectedCoupon()
@@ -79,16 +84,14 @@ public class CouponsAdapter extends RecyclerView.Adapter<CouponsAdapter.CouponsA
         }
 
         mCursor = newCursor;
+        mCouponList = new ArrayList<>();
 
         if (mCursor != null) {
+            while (mCursor.moveToNext()) {
+                this.mCouponList.add(Coupon.fromCursor(mCursor));
+            }
             this.notifyDataSetChanged();
         }
-    }
-
-    public void setCouponData(List<Coupon> coupons)
-    {
-        mCouponList = coupons;
-        notifyDataSetChanged();
     }
 
     class CouponsAdapterViewHolder extends RecyclerView.ViewHolder
@@ -109,19 +112,23 @@ public class CouponsAdapter extends RecyclerView.Adapter<CouponsAdapter.CouponsA
                 @Override
                 public void onClick(View v)
                 {
-                    lastSelectedPosition = getAdapterPosition();
-                    notifyDataSetChanged();
+                    lastSelectedPosition = CouponsAdapterViewHolder.this.getAdapterPosition();
+                    CouponsAdapter.this.notifyDataSetChanged();
                 }
             });
         }
 
         public void bind(int position)
         {
-            if (!mCursor.moveToPosition(position)) {
+            if (position >= mCouponList.size()) {
                 return;
             }
 
-            long id = mCursor.getLong(mCursor.getColumnIndex(ShoppoContract.CouponEntry._ID));
+            final int pos = this.getAdapterPosition();
+
+            Coupon coupon = mCouponList.get(pos);
+
+            long id = coupon.getId();
 
             this.itemView.setTag(id);
 

@@ -18,7 +18,7 @@ public class DbHelper extends SQLiteOpenHelper
 
     private static final String DATABASE_NAME = "shoppogen.db";
 
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 4;
 
     public DbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -42,7 +42,8 @@ public class DbHelper extends SQLiteOpenHelper
          * Setup Products Table
          */
         String SQL_CREATE_PRODUCTS_TABLE = "CREATE TABLE " + ProductEntry.TABLE_NAME + " (" +
-            ProductEntry.COLUMN_PRODUCT_NAME + " TEXT PRIMARY KEY, " +
+            ProductEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            ProductEntry.COLUMN_PRODUCT_NAME + " TEXT UNIQUE, " +
             ProductEntry.COLUMN_PRODUCT_PRICE + " DECIMAL(5, 2) NOT NULL" +
             ");";
         sqLiteDatabase.execSQL(SQL_CREATE_PRODUCTS_TABLE);
@@ -54,9 +55,10 @@ public class DbHelper extends SQLiteOpenHelper
          */
         String SQL_CREATE_COUPONS_PRODUCTS_TABLE = "CREATE TABLE " + CouponProductEntry.TABLE_NAME + " (" +
             CouponProductEntry.COLUMN_COUPON_ID + " INTEGER NOT NULL, " +
-            CouponProductEntry.COLUMN_PRODUCT_ID + " TEXT NOT NULL, " +
+            CouponProductEntry.COLUMN_PRODUCT_ID + " INTEGER NOT NULL, " +
+            "PRIMARY KEY (" + CouponProductEntry.COLUMN_COUPON_ID + ", " + CouponProductEntry.COLUMN_PRODUCT_ID + ")," +
             "FOREIGN KEY (" + CouponProductEntry.COLUMN_COUPON_ID + ") REFERENCES " + CouponEntry.TABLE_NAME + "(" + CouponEntry._ID + ")," +
-            "FOREIGN KEY (" + CouponProductEntry.COLUMN_PRODUCT_ID + ") REFERENCES " + ProductEntry.TABLE_NAME + "(" + ProductEntry.COLUMN_PRODUCT_NAME + ")" +
+            "FOREIGN KEY (" + CouponProductEntry.COLUMN_PRODUCT_ID + ") REFERENCES " + ProductEntry.TABLE_NAME + "(" + ProductEntry._ID + ")" +
             ");";
         sqLiteDatabase.execSQL(SQL_CREATE_COUPONS_PRODUCTS_TABLE);
 

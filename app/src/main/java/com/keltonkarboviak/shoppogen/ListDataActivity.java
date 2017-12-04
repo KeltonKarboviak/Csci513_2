@@ -15,7 +15,6 @@ import com.keltonkarboviak.shoppogen.DB.TestUtil;
 import com.keltonkarboviak.shoppogen.Models.Coupon;
 import com.keltonkarboviak.shoppogen.Models.Product;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -51,35 +50,29 @@ public class ListDataActivity extends AppCompatActivity
         /**
          * Setup Products
          */
-        Cursor productCursor = getAllProducts();
-
-        LinearLayoutManager layoutManager1 = new LinearLayoutManager(
+//      mProductsRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_products);
+        mProductsRecyclerView.setLayoutManager(new LinearLayoutManager(
             this,
             LinearLayoutManager.VERTICAL,
             false
-        );
-        mProductsRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_products);
-        mProductsRecyclerView.setLayoutManager(layoutManager1);
+        ));
         mProductsRecyclerView.setHasFixedSize(true);
 
-        mProductsAdapter = new ProductsAdapter(this, productCursor);
+        mProductsAdapter = new ProductsAdapter(this, null);
         mProductsRecyclerView.setAdapter(mProductsAdapter);
 
         /**
          * Setup Coupons
          */
-        Cursor couponCursor = getAllCoupons();
-
-        LinearLayoutManager layoutManager2 = new LinearLayoutManager(
+//      mCouponsRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_coupons);
+        mCouponsRecyclerView.setLayoutManager(new LinearLayoutManager(
             this,
             LinearLayoutManager.VERTICAL,
             false
-        );
-        mCouponsRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_coupons);
-        mCouponsRecyclerView.setLayoutManager(layoutManager2);
+        ));
         mCouponsRecyclerView.setHasFixedSize(true);
 
-        mCouponsAdapter = new CouponsAdapter(this, couponCursor);
+        mCouponsAdapter = new CouponsAdapter(this, null);
         mCouponsRecyclerView.setAdapter(mCouponsAdapter);
 
         loadProductData();
@@ -94,7 +87,9 @@ public class ListDataActivity extends AppCompatActivity
             @Override
             public void onClick(View view)
             {
-
+                List<Product> products = mProductsAdapter.getCheckedProducts();
+                updateProducts(products);
+                loadProductData();
             }
         });
 
@@ -107,8 +102,11 @@ public class ListDataActivity extends AppCompatActivity
                 Coupon coupon = mCouponsAdapter.getSelectedCoupon();
 
                 if (coupon != null) {
-
+                    deleteCoupon(coupon.getId());
+                    loadCouponData();
                 }
+
+                mCouponsAdapter.resetSelectedPosition();
             }
         });
     }
@@ -122,7 +120,7 @@ public class ListDataActivity extends AppCompatActivity
             null,
             null,
             null,
-            ShoppoContract.ProductEntry.COLUMN_PRODUCT_NAME
+            ShoppoContract.ProductEntry._ID
         );
     }
 
@@ -139,12 +137,29 @@ public class ListDataActivity extends AppCompatActivity
         );
     }
 
-    private void updateProductPrice(String productName, double productPrice)
+    private int updateProducts(List<Product> products)
     {
+        int count = 0;
+        for (Product p : products) {
+            if (updateProduct(p)) {
+                count++;
+            }
+        }
 
+        return count;
     }
 
-    private boolean deleteCoupon(int id)
+    private boolean updateProduct(Product product)
+    {
+        return mDb.update(
+            ShoppoContract.ProductEntry.TABLE_NAME,
+            product.toContentValues(),
+            ShoppoContract.ProductEntry._ID + " = " + product.getId(),
+            null
+        ) > 0;
+    }
+
+    private boolean deleteCoupon(long id)
     {
         return mDb.delete(
             ShoppoContract.CouponEntry.TABLE_NAME,
@@ -157,26 +172,14 @@ public class ListDataActivity extends AppCompatActivity
     {
         showProductDataView();
 
-        List<Product> products = new ArrayList<>();
-        products.add(new Product("apple", 2.50));
-        products.add(new Product("banana", 1.50));
-        products.add(new Product("pepsi", 0.75));
-        products.add(new Product("pear", 1.25));
-        products.add(new Product("grapes", 2.75));
-
-        mProductsAdapter.setProductData(products);
+        mProductsAdapter.swapCursor(getAllProducts());
     }
 
     private void loadCouponData()
     {
         showCouponDataView();
 
-        List<Coupon> coupons = new ArrayList<>();
-        coupons.add(new Coupon(0, 1.50, new String[]{"apple", "banana"}));
-        coupons.add(new Coupon(1, 0.75, new String[]{"apple", "banana", "pepsi"}));
-        coupons.add(new Coupon(2, 1.00, new String[]{"apple", "pear", "grapes"}));
-
-        mCouponsAdapter.setCouponData(coupons);
+        mCouponsAdapter.swapCursor(getAllCoupons());
     }
 
     private void showProductDataView()

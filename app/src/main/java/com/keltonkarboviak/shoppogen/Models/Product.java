@@ -1,19 +1,41 @@
 package com.keltonkarboviak.shoppogen.Models;
 
+import android.content.ContentValues;
+import android.database.Cursor;
+
+import com.keltonkarboviak.shoppogen.DB.ShoppoContract;
+
+
 /**
  * Created by kelton on 12/3/17.
  */
 
 public class Product
 {
+    private long id;
+
     private String name;
 
     private double price;
 
-    public Product(String name, double price)
+    private boolean checked;
+
+    public Product(long id, String name, double price)
     {
+        this.id = id;
         this.name = name;
         this.price = price;
+        this.checked = false;
+    }
+
+    public long getId()
+    {
+        return id;
+    }
+
+    public void setId(long id)
+    {
+        this.id = id;
     }
 
     public String getName()
@@ -36,6 +58,16 @@ public class Product
         this.price = price;
     }
 
+    public boolean isChecked()
+    {
+        return checked;
+    }
+
+    public void setChecked(boolean checked)
+    {
+        this.checked = checked;
+    }
+
     @Override
     public boolean equals(Object o)
     {
@@ -54,6 +86,27 @@ public class Product
     @Override
     public String toString()
     {
-        return "Product{" + "name='" + name + '\'' + ", price=" + price + '}';
+        return "Product{" +
+            "id=" + id + ", " +
+            "name='" + name + '\'' + ", " +
+            "price=" + price +
+            '}';
+    }
+
+    public ContentValues toContentValues()
+    {
+        ContentValues cv = new ContentValues();
+        cv.put(ShoppoContract.ProductEntry.COLUMN_PRODUCT_NAME, this.name);
+        cv.put(ShoppoContract.ProductEntry.COLUMN_PRODUCT_PRICE, this.price);
+        return cv;
+    }
+
+    public static Product fromCursor(Cursor cursor)
+    {
+        return new Product(
+            cursor.getLong(cursor.getColumnIndex(ShoppoContract.ProductEntry._ID)),
+            cursor.getString(cursor.getColumnIndex(ShoppoContract.ProductEntry.COLUMN_PRODUCT_NAME)),
+            cursor.getDouble(cursor.getColumnIndex(ShoppoContract.ProductEntry.COLUMN_PRODUCT_PRICE))
+        );
     }
 }
