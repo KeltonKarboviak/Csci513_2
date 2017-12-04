@@ -170,11 +170,11 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.Produc
 
     private class PositionAwareEditTextListener implements TextWatcher
     {
-        private int position;
+        private int mPosition;
 
         public void updatePosition(int position)
         {
-            this.position = position;
+            this.mPosition = position;
         }
 
         @Override
@@ -187,7 +187,7 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.Produc
             int before,
             int count)
         {
-            mProductList.get(position)
+            mProductList.get(mPosition)
                         .setPrice(Double.parseDouble(charSequence.toString()));
         }
 
@@ -199,17 +199,17 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.Produc
     private class PositionAwareOnCheckChangeListener
         implements CompoundButton.OnCheckedChangeListener
     {
-        private int position;
+        private int mPosition;
 
         public void updatePosition(int position)
         {
-            this.position = position;
+            this.mPosition = position;
         }
 
         @Override
         public void onCheckedChanged(CompoundButton compoundButton, boolean b)
         {
-            mProductList.get(position).setChecked(b);
+            mProductList.get(mPosition).setChecked(b);
         }
     }
 }
