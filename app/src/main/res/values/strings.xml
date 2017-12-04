@@ -7,4 +7,7 @@
     <string name="go_shopping">Let\'s Go Shopping</string>
     <string name="reset_system">Reset System</string>
     <string name="title_activity_list_data">ListDataActivity</string>
+
+    <string name="update_product_prices">Update Product Prices</string>
+    <string name="delete_coupon">Delete Coupon</string>
 </resources>

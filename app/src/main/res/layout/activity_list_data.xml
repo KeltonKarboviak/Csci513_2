@@ -7,38 +7,65 @@
     android:layout_height="match_parent"
     tools:context="com.keltonkarboviak.shoppogen.ListDataActivity">
 
-    <!--<android.support.design.widget.AppBarLayout-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:theme="@style/AppTheme.AppBarOverlay">-->
-        <!---->
-        <!--<TextView-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:text="List All Data"-->
-            <!--android:textSize=""/>-->
-
-        <!--<android.support.v7.widget.Toolbar-->
-            <!--android:id="@+id/toolbar"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="?attr/actionBarSize"-->
-            <!--android:background="?attr/colorPrimary"-->
-            <!--app:popupTheme="@style/AppTheme.PopupOverlay" />-->
-
-    <!--</android.support.design.widget.AppBarLayout>-->
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerview_products"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    </android.support.v7.widget.RecyclerView>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerview_coupons"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="All Products"
+                android:textSize="18sp"
+                android:paddingStart="6dp"
+                android:paddingEnd="6dp" />
 
-    </android.support.v7.widget.RecyclerView>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerview_products"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="8dp">
+            </android.support.v7.widget.RecyclerView>
+
+            <Button
+                android:id="@+id/btn_update_products"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/update_product_prices"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:layout_marginBottom="14dp" />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="All Coupons"
+                android:textSize="18sp"
+                android:paddingStart="6dp"
+                android:paddingEnd="6dp" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerview_coupons"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="8dp">
+            </android.support.v7.widget.RecyclerView>
+
+            <Button
+                android:id="@+id/btn_delete_coupon"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/delete_coupon"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:layout_marginBottom="10dp" />
+
+        </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>

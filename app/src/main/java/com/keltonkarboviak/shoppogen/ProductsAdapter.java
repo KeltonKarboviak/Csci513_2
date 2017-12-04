@@ -9,6 +9,10 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.keltonkarboviak.shoppogen.Models.Product;
+
+import java.util.List;
+
 
 /**
  * Created by kelton on 11/28/17.
@@ -16,13 +20,10 @@ import android.widget.TextView;
 
 public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ProductsAdapterViewHolder>
 {
-    private String[] mProductNames;
-
-    private double[] mProductPrices;
+    private List<Product> mProductList;
 
     public ProductsAdapter()
     {
-
     }
 
     @Override
@@ -33,7 +34,11 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.Produc
         LayoutInflater inflater = LayoutInflater.from(context);
         boolean shouldAttachToParentImmediately = false;
 
-        View view = inflater.inflate(layoutIdForListItem, viewGroup, shouldAttachToParentImmediately);
+        View view = inflater.inflate(
+            layoutIdForListItem,
+            viewGroup,
+            shouldAttachToParentImmediately
+        );
         ProductsAdapterViewHolder viewHolder = new ProductsAdapterViewHolder(view);
 
         return viewHolder;
@@ -48,21 +53,19 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.Produc
     @Override
     public int getItemCount()
     {
-        return mProductNames == null
+        return mProductList == null
             ? 0
-            : mProductNames.length;
+            : mProductList.size();
     }
 
-    public void setProductData(String[] productNames, double[] productPrices)
+    public void setProductData(List<Product> products)
     {
-        this.mProductNames = productNames;
-        this.mProductPrices = productPrices;
+        mProductList = products;
         notifyDataSetChanged();
     }
 
     class ProductsAdapterViewHolder extends RecyclerView.ViewHolder
     {
-
         public final CheckBox mProductCheckBox;
 
         public final TextView mProductNameTextView;
@@ -80,8 +83,10 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.Produc
 
         public void bind(int position)
         {
-            mProductNameTextView.setText(mProductNames[position]);
-            mProductPriceEditText.setText(String.valueOf(mProductPrices[position]));
+            Product product = mProductList.get(position);
+
+            mProductNameTextView.setText(product.getName());
+            mProductPriceEditText.setText(String.format("%01.2f", product.getPrice()));
         }
     }
 }
