@@ -31,11 +31,15 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.Produc
 
     private List<Product> mProductList;
 
-    public ProductsAdapter(Context context, Cursor cursor)
+    private boolean isEditable = false;
+
+    public ProductsAdapter(Context context, Cursor cursor, boolean editable)
     {
         this.mContext = context;
 
         swapCursor(cursor);
+
+        this.isEditable = editable;
     }
 
     @Override
@@ -126,6 +130,14 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.Produc
             mProductCheckBox = (CheckBox) itemView.findViewById(R.id.cb_product_update);
             mProductNameTextView = (TextView) itemView.findViewById(R.id.tv_product_name);
             mProductPriceEditText = (EditText) itemView.findViewById(R.id.et_product_price);
+
+            mProductPriceEditText.setFocusable(isEditable);
+
+            // Set visibility setting. Depends on the context whether this should be editable.
+            if (!isEditable) {
+                mProductCheckBox.setVisibility(View.INVISIBLE);
+            }
+
             mPositionAwareEditTextListener = editTextListener;
             mPositionAwareOnCheckChangeListener = checkChangeListener;
 

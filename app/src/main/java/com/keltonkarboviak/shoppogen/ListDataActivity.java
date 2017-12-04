@@ -47,8 +47,8 @@ public class ListDataActivity extends AppCompatActivity
         // NOTE: DEBUGGING PURPOSES ONLY
         TestUtil.insertFakeData(mDb);
 
-        /**
-         * Setup Products
+        /*
+          Setup Products
          */
         mProductsRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_products);
         mProductsRecyclerView.setLayoutManager(new LinearLayoutManager(
@@ -58,11 +58,11 @@ public class ListDataActivity extends AppCompatActivity
         ));
         mProductsRecyclerView.setHasFixedSize(true);
 
-        mProductsAdapter = new ProductsAdapter(this, null);
+        mProductsAdapter = new ProductsAdapter(this, null, true);
         mProductsRecyclerView.setAdapter(mProductsAdapter);
 
-        /**
-         * Setup Coupons
+        /*
+          Setup Coupons
          */
         mCouponsRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_coupons);
         mCouponsRecyclerView.setLayoutManager(new LinearLayoutManager(

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.keltonkarboviak.shoppogen">
+    package="com.keltonkarboviak.shoppogen">
 
     <application
         android:allowBackup="true"
@@ -24,6 +24,14 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.keltonkarboviak.shoppogen.MainActivity" />
+        </activity>
+        <activity
+            android:name=".CouponDetailActivity"
+            android:parentActivityName=".ListDataActivity">
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.keltonkarboviak.shoppogen.ListDataActivity" />
         </activity>
     </application>
 

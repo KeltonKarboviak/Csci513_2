@@ -1,8 +1,12 @@
 package com.keltonkarboviak.shoppogen;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.URLSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,7 +54,7 @@ public class CouponsAdapter extends RecyclerView.Adapter<CouponsAdapter.CouponsA
             shouldAttachToParentImmediately
         );
 
-        return new CouponsAdapterViewHolder(view);
+        return new CouponsAdapterViewHolder(view, new PositionAwareOnClickListener());
     }
 
     @Override
@@ -100,13 +104,13 @@ public class CouponsAdapter extends RecyclerView.Adapter<CouponsAdapter.CouponsA
 
         public final TextView mCouponIdTextView;
 
-        public CouponsAdapterViewHolder(View itemView)
+        public final PositionAwareOnClickListener mOnClickListener;
+
+        public CouponsAdapterViewHolder(View itemView, PositionAwareOnClickListener onClickListener)
         {
             super(itemView);
 
             mCouponRadioBtn = (RadioButton) itemView.findViewById(R.id.rb_coupon_update);
-            mCouponIdTextView = (TextView) itemView.findViewById(R.id.tv_coupon_id);
-
             mCouponRadioBtn.setOnClickListener(new View.OnClickListener()
             {
                 @Override
@@ -116,6 +120,12 @@ public class CouponsAdapter extends RecyclerView.Adapter<CouponsAdapter.CouponsA
                     CouponsAdapter.this.notifyDataSetChanged();
                 }
             });
+
+            mOnClickListener = onClickListener;
+
+            mCouponIdTextView = (TextView) itemView.findViewById(R.id.tv_coupon_id);
+
+            mCouponIdTextView.setOnClickListener(mOnClickListener);
         }
 
         public void bind(int position)
@@ -125,6 +135,8 @@ public class CouponsAdapter extends RecyclerView.Adapter<CouponsAdapter.CouponsA
             }
 
             final int pos = this.getAdapterPosition();
+
+            mOnClickListener.updatePosition(pos);
 
             Coupon coupon = mCouponList.get(pos);
 
@@ -137,6 +149,35 @@ public class CouponsAdapter extends RecyclerView.Adapter<CouponsAdapter.CouponsA
             mCouponRadioBtn.setChecked(lastSelectedPosition == position);
 
             mCouponIdTextView.setText(String.valueOf(id));
+
+            // Make the ID TextView a HyperText
+            SpannableStringBuilder ssb = new SpannableStringBuilder();
+            ssb.append(mCouponIdTextView.getText());
+            ssb.setSpan(new URLSpan("#"), 0, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            mCouponIdTextView.setText(ssb, TextView.BufferType.SPANNABLE);
+        }
+    }
+
+
+    private class PositionAwareOnClickListener implements View.OnClickListener
+    {
+        private int mPosition;
+
+        public void updatePosition(int position)
+        {
+            this.mPosition = position;
+        }
+
+        @Override
+        public void onClick(View view)
+        {
+            Intent intent = new Intent(mContext, CouponDetailActivity.class);
+
+            Coupon coupon = mCouponList.get(mPosition);
+
+            intent.putExtra("COUPON_ID", coupon.getId());
+
+            mContext.startActivity(intent);
         }
     }
 }
