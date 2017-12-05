@@ -12,7 +12,6 @@ import android.widget.Button;
 
 import com.keltonkarboviak.shoppogen.DB.DbHelper;
 import com.keltonkarboviak.shoppogen.DB.ShoppoContract;
-import com.keltonkarboviak.shoppogen.DB.TestUtil;
 import com.keltonkarboviak.shoppogen.Models.Coupon;
 import com.keltonkarboviak.shoppogen.Models.Product;
 
@@ -45,11 +44,8 @@ public class ListDataActivity extends AppCompatActivity
 
         mDb = dbHelper.getWritableDatabase();
 
-        // NOTE: DEBUGGING PURPOSES ONLY
-        TestUtil.insertFakeData(mDb);
-
         /*
-          Setup Products
+         * Setup Products
          */
         mProductsRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_products);
         mProductsRecyclerView.setLayoutManager(new LinearLayoutManager(
@@ -64,7 +60,7 @@ public class ListDataActivity extends AppCompatActivity
         mProductsRecyclerView.setAdapter(mProductsAdapter);
 
         /*
-          Setup Coupons
+         * Setup Coupons
          */
         mCouponsRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_coupons);
         mCouponsRecyclerView.setLayoutManager(new LinearLayoutManager(
@@ -80,7 +76,7 @@ public class ListDataActivity extends AppCompatActivity
         loadProductData();
         loadCouponData();
 
-        /**
+        /*
          * Setup Buttons
          */
         mUpdateProductPricesBtn = (Button) findViewById(R.id.btn_update_products);
