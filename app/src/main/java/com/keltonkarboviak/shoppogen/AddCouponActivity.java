@@ -1,10 +1,20 @@
 package com.keltonkarboviak.shoppogen;
 
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.keltonkarboviak.shoppogen.DB.DbHelper;
+import com.keltonkarboviak.shoppogen.DB.ShoppoContract;
+import com.keltonkarboviak.shoppogen.Models.Coupon;
 
 
 public class AddCouponActivity extends AppCompatActivity
@@ -31,9 +41,9 @@ public class AddCouponActivity extends AppCompatActivity
 
         DbHelper dbHelper = new DbHelper(this);
 
-        mDb = dbHelper.getWriteableDatabase();
+        mDb = dbHelper.getWritableDatabase();
 
-        mIdLabel = (TextView) findViewById(R.id.tv_coupon_id_label);
+        mIdLabel = (TextView) findViewById(R.id.label_coupon_id);
         mIdLabel.setVisibility(View.INVISIBLE);
 
         mIdEditText = (EditText) findViewById(R.id.et_coupon_id);
@@ -47,16 +57,28 @@ public class AddCouponActivity extends AppCompatActivity
             @Override
             public void onClick(View view)
             {
-                // TODO: Add a try/catch around this
-                double discount = Double.parseDouble(mDiscountEditText.getText().toString());
+                double discount = -1.0;
+                try {
+                    discount = Double.parseDouble(mDiscountEditText.getText().toString());
 
-                Coupon coupon = new Coupon(discount);
+                    Coupon coupon = new Coupon(discount);
 
-                if (!insertCoupon(coupon)) {
-                    Toast.makeText(this, "SQL Error: Failed to insert Coupon: " + coupon, Toast.LENGTH_LONG).show();
+                    if (!insertCoupon(coupon)) {
+                        Toast.makeText(
+                            AddCouponActivity.this,
+                            "SQL Error: Failed to insert Coupon: " + coupon,
+                            Toast.LENGTH_LONG
+                        ).show();
+                    }
+                } catch (Exception e) {
+                    Toast.makeText(
+                        AddCouponActivity.this,
+                        "Discount is not a valid number",
+                        Toast.LENGTH_LONG
+                    ).show();
+                } finally {
+                    resetComponents();
                 }
-
-                resetComponents();
             }
         });
 

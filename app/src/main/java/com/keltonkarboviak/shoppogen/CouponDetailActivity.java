@@ -7,8 +7,9 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.keltonkarboviak.shoppogen.DB.DbHelper;
@@ -50,7 +51,7 @@ public class CouponDetailActivity extends AppCompatActivity
             return;
         }
 
-        mIdEditText = (EditText) findViewById(R.id.tv_coupon_id);
+        mIdEditText = (EditText) findViewById(R.id.et_coupon_id);
         mIdEditText.setText(String.valueOf(coupon.getId()));
         mIdEditText.setFocusable(false);
 

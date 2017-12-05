@@ -1,7 +1,16 @@
 package com.keltonkarboviak.shoppogen;
 
-import android.support.v7.app.AppCompatActivity;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import com.keltonkarboviak.shoppogen.DB.DbHelper;
+import com.keltonkarboviak.shoppogen.DB.ShoppoContract;
+import com.keltonkarboviak.shoppogen.Models.Product;
 
 
 public class AddProductActivity extends AppCompatActivity
@@ -22,7 +31,7 @@ public class AddProductActivity extends AppCompatActivity
 
         DbHelper dbHelper = new DbHelper(this);
 
-        mDb = dbHelper.getWriteableDatabase();
+        mDb = dbHelper.getWritableDatabase();
 
         mNameEditText = (EditText) findViewById(R.id.et_product_name);
 
@@ -36,16 +45,28 @@ public class AddProductActivity extends AppCompatActivity
             {
                 String name = mNameEditText.getText().toString();
 
-                // TODO: Add a try/catch around this
-                double discount = Double.parseDouble(mPriceEditText.getText().toString());
+                double price = -1.0;
+                try {
+                    price = Double.parseDouble(mPriceEditText.getText().toString());
 
-                Product product = new Product(name, discount);
+                    Product product = new Product(name, price);
 
-                if (!insertProduct(product)) {
-                    Toast.makeText(this, "SQL Error: Failed to insert Product: " + product, Toast.LENGTH_LONG).show();
+                    if (!insertProduct(product)) {
+                        Toast.makeText(
+                            AddProductActivity.this,
+                            "SQL Error: Failed to insert Product: " + product,
+                            Toast.LENGTH_LONG
+                        ).show();
+                    }
+                } catch (Exception e) {
+                    Toast.makeText(
+                        AddProductActivity.this,
+                        "Price is not a valid number",
+                        Toast.LENGTH_LONG
+                    ).show();
+                } finally {
+                    resetComponents();
                 }
-
-                resetComponents();
             }
         });
     }

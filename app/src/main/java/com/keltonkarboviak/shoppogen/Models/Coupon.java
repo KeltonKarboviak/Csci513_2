@@ -73,7 +73,8 @@ public class Coupon
         return "Coupon{" + "id=" + id + ", discount=" + discount + '}';
     }
 
-    public ContentValues toContentValues() {
+    public ContentValues toContentValues()
+    {
         ContentValues cv = new ContentValues();
 
         if (this.id >= 0) {
