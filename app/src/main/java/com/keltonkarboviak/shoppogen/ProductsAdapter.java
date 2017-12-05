@@ -31,15 +31,33 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.Produc
 
     private List<Product> mProductList;
 
-    private boolean isEditable = false;
+    private boolean mIsEditable;
+
+    private boolean mIsSelectable;
+
+    public ProductsAdapter(Context context)
+    {
+        this(context, null);
+    }
+
+    public ProductsAdapter(Context context, Cursor cursor)
+    {
+        this(context, cursor, false);
+    }
 
     public ProductsAdapter(Context context, Cursor cursor, boolean editable)
+    {
+        this(context, cursor, editable, editable);
+    }
+
+    public ProductsAdapter(Context context, Cursor cursor, boolean editable, boolean selectable)
     {
         this.mContext = context;
 
         swapCursor(cursor);
 
-        this.isEditable = editable;
+        this.mIsEditable = editable;
+        this.mIsSelectable = selectable;
     }
 
     @Override
@@ -131,10 +149,10 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.Produc
             mProductNameTextView = (TextView) itemView.findViewById(R.id.tv_product_name);
             mProductPriceEditText = (EditText) itemView.findViewById(R.id.et_product_price);
 
-            mProductPriceEditText.setFocusable(isEditable);
+            mProductPriceEditText.setFocusable(mIsEditable);
 
             // Set visibility setting. Depends on the context whether this should be editable.
-            if (!isEditable) {
+            if (!mIsSelectable) {
                 mProductCheckBox.setVisibility(View.INVISIBLE);
             }
 

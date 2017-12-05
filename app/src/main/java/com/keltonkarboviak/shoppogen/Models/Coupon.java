@@ -16,7 +16,17 @@ public class Coupon
 
     private double discount;
 
-    public Coupon(long id, double discount/*, String[] products*/)
+    public Coupon()
+    {
+        this(-1, -1.0);
+    }
+
+    public Coupon(double discount)
+    {
+        this(-1, discount);
+    }
+
+    public Coupon(long id, double discount)
     {
         this.id = id;
         this.discount = discount;
@@ -60,13 +70,18 @@ public class Coupon
     @Override
     public String toString()
     {
-        return "Coupon{" + "id=" + id + ", discount=" + discount /*+", products=" + products*/ + '}';
+        return "Coupon{" + "id=" + id + ", discount=" + discount + '}';
     }
 
     public ContentValues toContentValues() {
         ContentValues cv = new ContentValues();
-        cv.put(ShoppoContract.CouponEntry._ID, this.id);
+
+        if (this.id >= 0) {
+            cv.put(ShoppoContract.CouponEntry._ID, this.id);
+        }
+
         cv.put(ShoppoContract.CouponEntry.COLUMN_COUPON_DISCOUNT, this.discount);
+
         return cv;
     }
 

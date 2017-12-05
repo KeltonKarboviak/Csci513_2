@@ -10,4 +10,7 @@
 
     <string name="update_product_prices">Update Product Prices</string>
     <string name="delete_coupon">Delete Coupon</string>
+
+    <string name="submit_new_coupon">Add Coupon</string>
+    <string name="submit_new_product">Add Product</string>
 </resources>

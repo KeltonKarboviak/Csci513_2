@@ -18,9 +18,11 @@ import com.keltonkarboviak.shoppogen.Models.Coupon;
 
 public class CouponDetailActivity extends AppCompatActivity
 {
-    private TextView mIdTextView;
+    private EditText mIdEditText;
 
     private EditText mDiscountEditText;
+
+    private Button mSubmitButton;
 
     private RecyclerView mProductsRecyclerView;
 
@@ -48,12 +50,17 @@ public class CouponDetailActivity extends AppCompatActivity
             return;
         }
 
-        mIdTextView = (TextView) findViewById(R.id.tv_coupon_id);
-        mIdTextView.setText(String.valueOf(coupon.getId()));
+        mIdEditText = (EditText) findViewById(R.id.tv_coupon_id);
+        mIdEditText.setText(String.valueOf(coupon.getId()));
+        mIdEditText.setFocusable(false);
 
         mDiscountEditText = (EditText) findViewById(R.id.et_coupon_discount);
         mDiscountEditText.setText(String.format("%01.2f", coupon.getDiscount()));
         mDiscountEditText.setFocusable(false);
+
+        // Hide the Submit button in this view
+        mSubmitButton = (Button) findViewById(R.id.btn_coupon_submit);
+        mSubmitButton.setVisibility(View.INVISIBLE);
 
         /*
           Setup Products
@@ -66,6 +73,7 @@ public class CouponDetailActivity extends AppCompatActivity
         ));
         mProductsRecyclerView.setHasFixedSize(true);
 
+        // Product list items should not be editable or selectable
         mProductsAdapter = new ProductsAdapter(this, getProductsByCouponId(couponId), false);
         mProductsRecyclerView.setAdapter(mProductsAdapter);
     }

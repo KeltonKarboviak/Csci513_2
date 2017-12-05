@@ -20,8 +20,8 @@
             android:layout_weight="50"
             android:text="ID" />
 
-        <TextView
-            android:id="@+id/tv_coupon_id"
+        <EditText
+            android:id="@+id/et_coupon_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
@@ -57,6 +57,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="60"
             android:inputType="numberDecimal"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
     </LinearLayout>
@@ -74,5 +75,13 @@
         android:layout_height="wrap_content"
         android:padding="8dp">
     </android.support.v7.widget.RecyclerView>
+
+    <Button
+        android:id="@+id/btn_coupon_submit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/submit_new_coupon"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="4dp" />
 
 </LinearLayout>

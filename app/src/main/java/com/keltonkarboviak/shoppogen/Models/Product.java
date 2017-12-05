@@ -20,6 +20,16 @@ public class Product
 
     private boolean checked;
 
+    public Product()
+    {
+        this(-1, "", -1.0);
+    }
+
+    public Product(String name, double price)
+    {
+        this(-1, name, price);
+    }
+
     public Product(long id, String name, double price)
     {
         this.id = id;
@@ -96,8 +106,14 @@ public class Product
     public ContentValues toContentValues()
     {
         ContentValues cv = new ContentValues();
+
+        if (this.id >= 0) {
+            cv.put(ShoppoContract.ProductEntry._ID, this.id);
+        }
+
         cv.put(ShoppoContract.ProductEntry.COLUMN_PRODUCT_NAME, this.name);
         cv.put(ShoppoContract.ProductEntry.COLUMN_PRODUCT_PRICE, this.price);
+
         return cv;
     }
 

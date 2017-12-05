@@ -32,8 +32,12 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.keltonkarboviak.shoppogen.ListDataActivity" />
         </activity>
-        <activity android:name=".AddProductActivity" />
-        <activity android:name=".AddCouponActivity"></activity>
+        <activity
+            android:name=".AddProductActivity"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".AddCouponActivity"
+            android:parentActivityName=".MainActivity" />
     </application>
 
 </manifest>
