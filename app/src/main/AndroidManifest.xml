@@ -28,11 +28,12 @@
         <activity
             android:name=".CouponDetailActivity"
             android:parentActivityName=".ListDataActivity">
-
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.keltonkarboviak.shoppogen.ListDataActivity" />
         </activity>
+        <activity android:name=".AddProductActivity" />
+        <activity android:name=".AddCouponActivity"></activity>
     </application>
 
 </manifest>
