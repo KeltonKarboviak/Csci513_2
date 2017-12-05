@@ -5,6 +5,9 @@ import android.database.Cursor;
 
 import com.keltonkarboviak.shoppogen.DB.ShoppoContract;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * Created by kelton on 12/3/17.
@@ -16,20 +19,33 @@ public class Coupon
 
     private double discount;
 
+    private List<Product> products;
+
     public Coupon()
     {
-        this(-1, -1.0);
-    }
-
-    public Coupon(double discount)
-    {
-        this(-1, discount);
+        this(-1, -1.0, new ArrayList<Product>());
     }
 
     public Coupon(long id, double discount)
     {
+        this(id, discount, new ArrayList<Product>());
+    }
+
+    public Coupon(double discount)
+    {
+        this(-1, discount, new ArrayList<Product>());
+    }
+
+    public Coupon(double discount, List<Product> products)
+    {
+        this(-1, discount, products);
+    }
+
+    public Coupon(long id, double discount, List<Product> products)
+    {
         this.id = id;
         this.discount = discount;
+        this.products = products;
     }
 
     public long getId()
@@ -50,6 +66,16 @@ public class Coupon
     public void setDiscount(double discount)
     {
         this.discount = discount;
+    }
+
+    public List<Product> getProducts()
+    {
+        return products;
+    }
+
+    public void setProducts(List<Product> products)
+    {
+        this.products = products;
     }
 
     @Override
@@ -84,6 +110,20 @@ public class Coupon
         cv.put(ShoppoContract.CouponEntry.COLUMN_COUPON_DISCOUNT, this.discount);
 
         return cv;
+    }
+
+    public List<ContentValues> productsToContentValues()
+    {
+        List<ContentValues> values = new ArrayList<>();
+
+        for (Product p : this.products) {
+            ContentValues cv = new ContentValues();
+            cv.put(ShoppoContract.CouponProductEntry.COLUMN_COUPON_ID, this.id);
+            cv.put(ShoppoContract.CouponProductEntry.COLUMN_PRODUCT_ID, p.getId());
+            values.add(cv);
+        }
+
+        return values;
     }
 
     public static Coupon fromCursor(Cursor cursor)

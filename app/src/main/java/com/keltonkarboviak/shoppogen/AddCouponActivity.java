@@ -1,6 +1,8 @@
 package com.keltonkarboviak.shoppogen;
 
+import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +17,9 @@ import android.widget.Toast;
 import com.keltonkarboviak.shoppogen.DB.DbHelper;
 import com.keltonkarboviak.shoppogen.DB.ShoppoContract;
 import com.keltonkarboviak.shoppogen.Models.Coupon;
+import com.keltonkarboviak.shoppogen.Models.Product;
+
+import java.util.List;
 
 
 public class AddCouponActivity extends AppCompatActivity
@@ -61,15 +66,22 @@ public class AddCouponActivity extends AppCompatActivity
                 try {
                     discount = Double.parseDouble(mDiscountEditText.getText().toString());
 
-                    Coupon coupon = new Coupon(discount);
+                    List<Product> products = mProductsAdapter.getCheckedProducts();
 
-                    if (!insertCoupon(coupon)) {
-                        Toast.makeText(
-                            AddCouponActivity.this,
-                            "SQL Error: Failed to insert Coupon: " + coupon,
-                            Toast.LENGTH_LONG
-                        ).show();
-                    }
+                    Coupon coupon = new Coupon(discount, products);
+
+                    String msg = !insertCoupon(coupon)
+                        ? "SQL Error: Failed to insert Coupon: " + coupon
+                        : "Coupon successfully added!";
+
+                    Toast.makeText(
+                        AddCouponActivity.this,
+                        msg,
+                        Toast.LENGTH_LONG
+                    ).show();
+
+                    // Reload Product RecyclerView to get rid of checked boxes
+                    loadProductData();
                 } catch (Exception e) {
                     Toast.makeText(
                         AddCouponActivity.this,
@@ -126,11 +138,40 @@ public class AddCouponActivity extends AppCompatActivity
 
     private boolean insertCoupon(Coupon coupon)
     {
-        // Returns true if Coupon was successfully inserted, false otherwise
-        return mDb.insert(
-            ShoppoContract.CouponEntry.TABLE_NAME,
-            null,
-            coupon.toContentValues()
-        ) >= 0;  // mDb.insert() returns row ID of newly inserted row
+        long couponId = -1;
+        int count = 0;
+        try {
+            mDb.beginTransaction();
+
+            couponId = mDb.insert(
+                ShoppoContract.CouponEntry.TABLE_NAME,
+                null,
+                coupon.toContentValues()
+            );  // mDb.insert() returns row ID of newly inserted row
+
+            // Need to set ID of Coupon obj for the next call to productsToContentValues()
+            coupon.setId(couponId);
+
+            List<ContentValues> values = coupon.productsToContentValues();
+
+            for (ContentValues cv : values) {
+                if (mDb.insert(ShoppoContract.CouponProductEntry.TABLE_NAME, null, cv) >= 0) {
+                    count++;
+                }
+            }
+
+            mDb.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Toast.makeText(
+                AddCouponActivity.this,
+                "SQLException: " + e.getMessage(),
+                Toast.LENGTH_LONG
+            ).show();
+        } finally {
+            mDb.endTransaction();
+        }
+
+        // Returns true if Coupon and CouponProducts were successfully inserted, false otherwise
+        return couponId >= 0 && count == coupon.getProducts().size();
     }
 }
