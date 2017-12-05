@@ -96,6 +96,7 @@ public class AddCouponActivity extends AppCompatActivity
         // The product list items should not be editable, but should be
         // selectable
         mProductsAdapter = new ProductsAdapter(this, null, false, true);
+        mProductsRecyclerView.setAdapter(mProductsAdapter);
 
         loadProductData();
     }
