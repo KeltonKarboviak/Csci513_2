@@ -1,5 +1,6 @@
 package com.keltonkarboviak.shoppogen;
 
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -51,13 +52,15 @@ public class AddProductActivity extends AppCompatActivity
 
                     Product product = new Product(name, price);
 
-                    if (!insertProduct(product)) {
-                        Toast.makeText(
-                            AddProductActivity.this,
-                            "SQL Error: Failed to insert Product: " + product,
-                            Toast.LENGTH_LONG
-                        ).show();
-                    }
+                    String msg = !insertProduct(product)
+                        ? "SQL Error: Failed to insert Product: " + product
+                        : "Product successfully added!";
+
+                    Toast.makeText(
+                        AddProductActivity.this,
+                        msg,
+                        Toast.LENGTH_LONG
+                    ).show();
                 } catch (Exception e) {
                     Toast.makeText(
                         AddProductActivity.this,
@@ -79,11 +82,28 @@ public class AddProductActivity extends AppCompatActivity
 
     private boolean insertProduct(Product product)
     {
+        boolean successful = false;
+        try {
+            mDb.beginTransaction();
+
+            successful = mDb.insert(
+                ShoppoContract.ProductEntry.TABLE_NAME,
+                null,
+                product.toContentValues()
+            ) >= 0;  // mDb.insert() returns row ID of newly inserted row
+
+            mDb.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Toast.makeText(
+                AddProductActivity.this,
+                "SQLException: " + e.getMessage(),
+                Toast.LENGTH_LONG
+            ).show();
+        } finally {
+            mDb.endTransaction();
+        }
+
         // Returns true if Product was successfully inserted, false otherwise
-        return mDb.insert(
-            ShoppoContract.ProductEntry.TABLE_NAME,
-            null,
-            product.toContentValues()
-        ) >= 0;  // mDb.insert() returns row ID of newly inserted row
+        return successful;
     }
 }
