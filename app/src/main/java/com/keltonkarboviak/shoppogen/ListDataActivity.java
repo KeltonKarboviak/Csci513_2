@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.keltonkarboviak.shoppogen.DB.DbHelper;
 import com.keltonkarboviak.shoppogen.DB.ShoppoContract;
@@ -86,7 +87,15 @@ public class ListDataActivity extends AppCompatActivity
             public void onClick(View view)
             {
                 List<Product> products = mProductsAdapter.getCheckedProducts();
-                updateProducts(products);
+
+                if (updateProducts(products)) {
+                    Toast.makeText(
+                        ListDataActivity.this,
+                        "Products successfully updated!",
+                        Toast.LENGTH_LONG
+                    ).show();
+                }
+
                 loadProductData();
             }
         });
@@ -100,7 +109,14 @@ public class ListDataActivity extends AppCompatActivity
                 Coupon coupon = mCouponsAdapter.getSelectedCoupon();
 
                 if (coupon != null) {
-                    deleteCoupon(coupon.getId());
+                    if (deleteCoupon(coupon.getId())) {
+                        Toast.makeText(
+                            ListDataActivity.this,
+                            "Coupon successfully deleted!",
+                            Toast.LENGTH_LONG
+                        ).show();
+                    }
+
                     loadCouponData();
                 }
 
@@ -135,7 +151,7 @@ public class ListDataActivity extends AppCompatActivity
         );
     }
 
-    private int updateProducts(List<Product> products)
+    private boolean updateProducts(List<Product> products)
     {
         int count = 0;
         try {
@@ -154,7 +170,7 @@ public class ListDataActivity extends AppCompatActivity
             mDb.endTransaction();
         }
 
-        return count;
+        return count == products.size();
     }
 
     private boolean updateProduct(Product product)
