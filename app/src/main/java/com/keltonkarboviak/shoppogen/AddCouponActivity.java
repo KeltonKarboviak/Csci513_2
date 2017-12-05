@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.ViewManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -48,11 +49,13 @@ public class AddCouponActivity extends AppCompatActivity
 
         mDb = dbHelper.getWritableDatabase();
 
+        // Remove since not needed in this view
         mIdLabel = (TextView) findViewById(R.id.label_coupon_id);
-        mIdLabel.setVisibility(View.INVISIBLE);
+        ((ViewManager) mIdLabel.getParent()).removeView(mIdLabel);
 
+        // Remove since not needed in this view
         mIdEditText = (EditText) findViewById(R.id.et_coupon_id);
-        mIdEditText.setVisibility(View.INVISIBLE);
+        ((ViewManager) mIdEditText.getParent()).removeView(mIdEditText);
 
         mDiscountEditText = (EditText) findViewById(R.id.et_coupon_discount);
 
