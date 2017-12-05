@@ -205,8 +205,14 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.Produc
             int before,
             int count)
         {
-            mProductList.get(mPosition)
-                        .setPrice(Double.parseDouble(charSequence.toString()));
+            Product p = mProductList.get(mPosition);
+
+            try {
+                p.setPrice(Double.parseDouble(charSequence.toString()));
+            } catch (Exception e) {
+                // User entered non-numeric or empty string
+                p.setPrice(0.0);
+            }
         }
 
         @Override
