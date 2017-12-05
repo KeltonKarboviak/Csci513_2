@@ -58,6 +58,7 @@ public class ListDataActivity extends AppCompatActivity
         ));
         mProductsRecyclerView.setHasFixedSize(true);
 
+        // Product list item should be editable & selectable
         mProductsAdapter = new ProductsAdapter(this, null, true);
         mProductsRecyclerView.setAdapter(mProductsAdapter);
 
@@ -140,10 +141,20 @@ public class ListDataActivity extends AppCompatActivity
     private int updateProducts(List<Product> products)
     {
         int count = 0;
-        for (Product p : products) {
-            if (updateProduct(p)) {
-                count++;
+        try {
+            mDb.beginTransaction();
+
+            for (Product p : products) {
+                if (updateProduct(p)) {
+                    count++;
+                }
             }
+
+            mDb.setTransactionSuccessful();
+        } catch (SQLException e) {
+
+        } finally {
+            mDb.endTransaction();
         }
 
         return count;
@@ -154,8 +165,8 @@ public class ListDataActivity extends AppCompatActivity
         return mDb.update(
             ShoppoContract.ProductEntry.TABLE_NAME,
             product.toContentValues(),
-            ShoppoContract.ProductEntry._ID + " = " + product.getId(),
-            null
+            ShoppoContract.ProductEntry._ID + " = ?",
+            new String[]{String.valueOf(product.getId())}
         ) > 0;
     }
 
