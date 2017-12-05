@@ -18,7 +18,11 @@ public class DbHelper extends SQLiteOpenHelper
 
     private static final String DATABASE_NAME = "shoppogen.db";
 
-    private static final int DATABASE_VERSION = 5;
+    private static final int DATABASE_VERSION = 6;
+
+    private String SQL_DROP_COUPONS_TABLE = "DROP TABLE IF EXISTS " + CouponEntry.TABLE_NAME + ";";
+    private String SQL_DROP_PRODUCTS_TABLE = "DROP TABLE IF EXISTS " + ProductEntry.TABLE_NAME + ";";
+    private String SQL_DROP_COUPONS_PRODUCTS_TABLE = "DROP TABLE IF EXISTS " + CouponProductEntry.TABLE_NAME + ";";
 
     public DbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -28,7 +32,7 @@ public class DbHelper extends SQLiteOpenHelper
     public void onCreate(SQLiteDatabase sqLiteDatabase)
     {
         /*
-          Setup Coupons Table
+         * Setup Coupons Table
          */
         String SQL_CREATE_COUPONS_TABLE = "CREATE TABLE " + CouponEntry.TABLE_NAME + " (" +
             CouponEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -39,7 +43,7 @@ public class DbHelper extends SQLiteOpenHelper
         Log.d(TAG, SQL_CREATE_COUPONS_TABLE);
 
         /*
-          Setup Products Table
+         * Setup Products Table
          */
         String SQL_CREATE_PRODUCTS_TABLE = "CREATE TABLE " + ProductEntry.TABLE_NAME + " (" +
             ProductEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -51,7 +55,7 @@ public class DbHelper extends SQLiteOpenHelper
         Log.d(TAG, SQL_CREATE_PRODUCTS_TABLE);
 
         /*
-          Setup CouponsProducts Table
+         * Setup CouponsProducts Table
          */
         String SQL_CREATE_COUPONS_PRODUCTS_TABLE = "CREATE TABLE " + CouponProductEntry.TABLE_NAME + " (" +
             CouponProductEntry.COLUMN_COUPON_ID + " INTEGER NOT NULL, " +
@@ -70,10 +74,11 @@ public class DbHelper extends SQLiteOpenHelper
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1)
     {
-        String SQL_DROP_COUPONS_TABLE = "DROP TABLE IF EXISTS " + CouponEntry.TABLE_NAME + ";";
-        String SQL_DROP_PRODUCTS_TABLE = "DROP TABLE IF EXISTS " + ProductEntry.TABLE_NAME + ";";
-        String SQL_DROP_COUPONS_PRODUCTS_TABLE = "DROP TABLE IF EXISTS " + CouponProductEntry.TABLE_NAME + ";";
+        fresh(sqLiteDatabase);
+    }
 
+    public void fresh(SQLiteDatabase sqLiteDatabase)
+    {
         sqLiteDatabase.execSQL(SQL_DROP_COUPONS_TABLE);
         sqLiteDatabase.execSQL(SQL_DROP_PRODUCTS_TABLE);
         sqLiteDatabase.execSQL(SQL_DROP_COUPONS_PRODUCTS_TABLE);
