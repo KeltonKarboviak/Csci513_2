@@ -41,7 +41,8 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view)
             {
-
+                Intent intent = new Intent(MainActivity.this, AddProductActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -51,7 +52,8 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view)
             {
-
+                Intent intent = new Intent(MainActivity.this, AddCouponActivity.class);
+                startActivity(intent);
             }
         });
 
