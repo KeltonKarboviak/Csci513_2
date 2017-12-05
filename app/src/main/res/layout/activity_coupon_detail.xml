@@ -7,81 +7,96 @@
     android:layout_height="match_parent"
     tools:context="com.keltonkarboviak.shoppogen.CouponDetailActivity">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="8dp">
+        android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/label_coupon_id"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:layout_weight="50"
-            android:text="ID" />
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        <EditText
-            android:id="@+id/et_coupon_id"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:layout_weight="50"
-            android:text=""
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="8dp">
 
-    </LinearLayout>
+                <TextView
+                    android:id="@+id/label_coupon_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="50"
+                    android:text="ID" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="8dp">
+                <EditText
+                    android:id="@+id/et_coupon_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:layout_weight="50"
+                    android:text=""
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/label_coupon_discount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="40"
-            android:text="Discount" />
+            </LinearLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="$"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="8dp">
 
-        <EditText
-            android:id="@+id/et_coupon_discount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="60"
-            android:inputType="numberDecimal"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/label_coupon_discount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="40"
+                    android:text="Discount" />
 
-    </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="$"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/label_recyclerview_products"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Products"
-        android:padding="8dp" />
+                <EditText
+                    android:id="@+id/et_coupon_discount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="60"
+                    android:inputType="numberDecimal"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerview_products"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="8dp">
-    </android.support.v7.widget.RecyclerView>
+            </LinearLayout>
 
-    <Button
-        android:id="@+id/btn_coupon_submit"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/submit_new_coupon"
-        android:layout_marginStart="4dp"
-        android:layout_marginEnd="4dp" />
+            <TextView
+                android:id="@+id/label_recyclerview_products"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Products"
+                android:padding="8dp" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerview_products"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="8dp">
+            </android.support.v7.widget.RecyclerView>
+
+            <Button
+                android:id="@+id/btn_coupon_submit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/submit_new_coupon"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp" />
+
+        </LinearLayout>
+
+    </ScrollView>
 
 </LinearLayout>
