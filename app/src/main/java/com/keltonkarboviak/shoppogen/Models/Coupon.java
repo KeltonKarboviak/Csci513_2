@@ -94,6 +94,7 @@ public class Coupon
         this.productIdSet = productIdSet;
     }
 
+    // TODO: See if this can easily be done using the existing List<Product>
     public boolean conflictsWith(Coupon other)
     {
         Set<Long> set = new HashSet<>(getProductIdSet());
