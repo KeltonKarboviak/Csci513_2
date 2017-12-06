@@ -98,7 +98,7 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.Produc
         return mProductList;
     }
 
-    public List<Product> getCheckedProducts()
+    public List<Product> getSelectedProducts()
     {
         List<Product> productsChecked = new ArrayList<>();
         for (Product p : mProductList) {

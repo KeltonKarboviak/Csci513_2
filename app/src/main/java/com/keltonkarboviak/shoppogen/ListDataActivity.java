@@ -86,7 +86,7 @@ public class ListDataActivity extends AppCompatActivity
             @Override
             public void onClick(View view)
             {
-                List<Product> products = mProductsAdapter.getCheckedProducts();
+                List<Product> products = mProductsAdapter.getSelectedProducts();
 
                 if (updateProducts(products)) {
                     Toast.makeText(

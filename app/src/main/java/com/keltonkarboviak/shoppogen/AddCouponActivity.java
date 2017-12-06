@@ -69,7 +69,7 @@ public class AddCouponActivity extends AppCompatActivity
                 try {
                     discount = Double.parseDouble(mDiscountEditText.getText().toString());
 
-                    List<Product> products = mProductsAdapter.getCheckedProducts();
+                    List<Product> products = mProductsAdapter.getSelectedProducts();
 
                     Coupon coupon = new Coupon(discount, products);
 

@@ -86,7 +86,8 @@ public class MainActivity extends AppCompatActivity
             {
                 dbHelper.fresh(mDb);
 
-                Toast.makeText(MainActivity.this, "System has been reset.", Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, "System has been reset.", Toast.LENGTH_LONG)
+                     .show();
             }
         });
     }
