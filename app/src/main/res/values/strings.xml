@@ -15,4 +15,7 @@
     <string name="product_price">Product Price</string>
     <string name="submit_new_coupon">Add Coupon</string>
     <string name="submit_new_product">Add Product</string>
+
+    <string name="submit_shopping_budget">Generate Shopping List w/ Budget</string>
+    <string name="submit_shopping_list">Calculate Best Price w/ Shopping List</string>
 </resources>

@@ -6,7 +6,10 @@ import android.database.Cursor;
 import com.keltonkarboviak.shoppogen.DB.ShoppoContract;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.function.Predicate;
 
 
 /**
@@ -20,6 +23,8 @@ public class Coupon
     private double discount;
 
     private List<Product> products;
+
+    private Set<Long> productIdSet;
 
     public Coupon()
     {
@@ -46,6 +51,7 @@ public class Coupon
         this.id = id;
         this.discount = discount;
         this.products = products;
+        this.productIdSet = new HashSet<>();
     }
 
     public long getId()
@@ -77,6 +83,40 @@ public class Coupon
     {
         this.products = products;
     }
+
+    public Set<Long> getProductIdSet()
+    {
+        return productIdSet;
+    }
+
+    public void setProductIdSet(Set<Long> productIdSet)
+    {
+        this.productIdSet = productIdSet;
+    }
+
+    public boolean conflictsWith(Coupon other)
+    {
+        Set<Long> set = new HashSet<>(getProductIdSet());
+        set.retainAll(other.getProductIdSet());
+
+        return !set.isEmpty();
+    }
+
+    public boolean canBeAppliedToShoppingSet(Set<Long> shoppingSet)
+    {
+        Set<Long> set = new HashSet<>(getProductIdSet());
+        set.removeAll(shoppingSet);
+
+        return set.isEmpty();
+    }
+
+    public final Predicate<Set<Long>> canBeRedeemed = new Predicate<Set<Long>>() {
+        @Override
+        public boolean test(Set<Long> longs)
+        {
+            return canBeAppliedToShoppingSet(longs);
+        }
+    };
 
     @Override
     public boolean equals(Object o)
