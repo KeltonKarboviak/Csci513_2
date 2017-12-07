@@ -22,7 +22,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Budget" />
+            android:text="Budget"
+            android:labelFor="@+id/et_budget" />
 
         <TextView
             android:id="@+id/textView4"
@@ -47,7 +48,6 @@
         android:id="@+id/btn_budget_submit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:text="@string/submit_shopping_budget"
         android:layout_marginStart="4dp"
         android:layout_marginEnd="4dp" />
@@ -56,39 +56,36 @@
         android:id="@+id/btn_list_submit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:text="@string/submit_shopping_list"
         android:layout_marginStart="4dp"
         android:layout_marginEnd="4dp" />
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="100dp">
+
+        <TextView
+            android:id="@+id/tv_log"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp" />
+
+    </android.support.v4.widget.NestedScrollView>
 
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:padding="8dp">
 
-        <LinearLayout
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerview_products"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recyclerview_products"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp">
-            </android.support.v7.widget.RecyclerView>
-
-            <TextView
-                android:id="@+id/tv_log"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:text="Hello"
-                android:padding="8dp"/>
-
-        </LinearLayout>
+            android:padding="8dp">
+        </android.support.v7.widget.RecyclerView>
 
     </android.support.v4.widget.NestedScrollView>
 

@@ -6,11 +6,11 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.keltonkarboviak.shoppogen.DB.DbHelper;
 import com.keltonkarboviak.shoppogen.DB.ShoppoContract;
@@ -80,7 +80,11 @@ public class ShoppingActivity extends AppCompatActivity
                         false
                     );
                 } catch (Exception e) {
-                    Toast.makeText(this, "Error: Entered Budget is not a valid number.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(
+                        ShoppingActivity.this,
+                        "Error: Entered Budget is not a valid number.",
+                        Toast.LENGTH_LONG
+                    ).show();
                 }
             }
         });
@@ -169,28 +173,11 @@ public class ShoppingActivity extends AppCompatActivity
         // used to get an index then access the coupon from coupons using that index.
         Set<Set<Integer>> powerSet = generatePowerSet(coupons.size());
 
-        // double totalProductPrice = calculateTotalProductAmount(products);
-        double totalProductPrice = products
-            .stream()
-            .mapToDouble(p -> p.getPrice())
-            .sum();
-
-        // TODO: Remove after testing
-        for (Set<Integer> s : powerSet) {
-            StringBuilder sb = new StringBuilder();
-            sb.append("{");
-
-            for (int i : s) {
-                sb.append(" " + i);
-            }
-
-            sb.append(" }");
-            Log.d(LOG_TAG, sb.toString());
-        }
+        double totalProductPrice = calculateTotalProductAmount(products);
 
         double bestDiscount = 0.0;
-        double bestGrossTotalPrice = 0.0;
-        Set<Integer> bestSet = null;
+        double bestGrossTotalPrice = isUserGenerated ? totalProductPrice : 0.0;
+        Set<Integer> bestSet = new HashSet<>();
         boolean validSet;
         for (Set<Integer> set : powerSet) {
             validSet = true;
@@ -198,10 +185,10 @@ public class ShoppingActivity extends AppCompatActivity
             // Foreach set in the power set, we'll check to see if every coupon
             // in the set is compatible with each other. If so, we'll then check
             // to see if the set gives a better discount than the current best.
-            List<Integer> list = new ArrayList<Integer>(set);
+            List<Integer> list = new ArrayList<>(set);
             for (int i = 0; i < list.size(); i++) {
                 for (int j = i + 1; j < list.size(); j++) {
-                    if (coupons.get(i).conflictsWith(coupons.get(j))) {
+                    if (coupons.get(list.get(i)).conflictsWith(coupons.get(list.get(j)))) {
                         validSet = false;
                         break;
                     }
@@ -217,47 +204,65 @@ public class ShoppingActivity extends AppCompatActivity
                 // with each other, we will check to see if it's total discount
                 // is better than the current best
 
-                // double totalDiscount = calculateTotalCouponDiscount(coupons);
-
                 // Calculate the total discount that would be applied with this
                 // set of coupons
-                double totalDiscount = set
-                    .stream()
-                    .mapToDouble(i -> coupons.get(i).getDiscount())
-                    .sum();
+                List<Coupon> couponSubset = getSubsetOfList(set, coupons);
+
+                double totalDiscount = calculateTotalCouponDiscount(couponSubset);
 
                 // Calculate the total cost of the products associated with this
                 // set of coupons before the discount is applied
                 double grossTotalPrice = isUserGenerated
                     ? totalProductPrice
-                    : set
-                        .stream()  // TODO: try parallelStream()
-                        .mapToDouble(i -> coupons.get(i).getProducts().stream().mapToDouble(p -> p.getPrice()).sum())
-                        .reduce(0.0, Double::sum);
+                    : calculateGrossTotalPriceFromCoupons(couponSubset);
 
                 double netTotalPrice = grossTotalPrice - totalDiscount;
 
                 if (totalDiscount > bestDiscount && netTotalPrice <= budget) {
                     bestDiscount = totalDiscount;
                     bestGrossTotalPrice = grossTotalPrice;
-                    bestSet = new HashSet<Integer>(set);
+                    bestSet = new HashSet<>(set);
                 }
             }
         }
 
         mLogTextView.append(
-            // TODO: Change this output after testing
-            // String.format("$%01.2f after $%01.2f off", bestGrossTotalPrice - bestDiscount, bestDiscount)
-            String.format("$%01.2f - $%01.2f = $%01.2f\n\n", bestGrossTotalPrice, bestDiscount, bestGrossTotalPrice - bestDiscount)
+            String.format(
+                "$%01.2f total - $%01.2f discount = $%01.2f net\n\n",
+                bestGrossTotalPrice,
+                bestDiscount,
+                bestGrossTotalPrice - bestDiscount
+            )
         );
 
         for (int i : bestSet) {
-            // TODO: Change this output after testing
-            mLogTextView.append(coupons.get(i) + '\n');
-            for (Product p : coupons.get(i).getProducts) {
-                mLogTextView.append('\t' + p + '\n');
+            mLogTextView.append(coupons.get(i).toString() + '\n');
+            for (Product p : coupons.get(i).getProducts()) {
+                mLogTextView.append('\t' + p.toString() + '\n');
             }
         }
+    }
+
+    private List<Coupon> getSubsetOfList(Set<Integer> set, List<Coupon> coupons)
+    {
+        List<Coupon> list = new ArrayList<>();
+        for (int i : set) {
+            list.add(coupons.get(i));
+        }
+
+        return list;
+    }
+
+    private double calculateGrossTotalPriceFromCoupons(List<Coupon> coupons)
+    {
+        double total = 0.0;
+        for (Coupon c : coupons) {
+            for (Product p : c.getProducts()) {
+                total += p.getPrice();
+            }
+        }
+
+        return total;
     }
 
     private double calculateTotalProductAmount(List<Product> products)

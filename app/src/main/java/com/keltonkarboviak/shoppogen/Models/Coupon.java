@@ -2,6 +2,7 @@ package com.keltonkarboviak.shoppogen.Models;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.support.annotation.NonNull;
 
 import com.keltonkarboviak.shoppogen.DB.ShoppoContract;
 
@@ -9,7 +10,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Predicate;
 
 
 /**
@@ -51,7 +51,7 @@ public class Coupon
         this.id = id;
         this.discount = discount;
         this.products = products;
-        this.productIdSet = new HashSet<>();
+        this.productIdSet = generateProductIdSetFromProducts();
     }
 
     public long getId()
@@ -82,6 +82,8 @@ public class Coupon
     public void setProducts(List<Product> products)
     {
         this.products = products;
+
+        setProductIdSet(generateProductIdSetFromProducts());
     }
 
     public Set<Long> getProductIdSet()
@@ -94,7 +96,16 @@ public class Coupon
         this.productIdSet = productIdSet;
     }
 
-    // TODO: See if this can easily be done using the existing List<Product>
+    private Set<Long> generateProductIdSetFromProducts()
+    {
+        Set<Long> set = new HashSet<>();
+        for (Product p : this.products) {
+            set.add(p.getId());
+        }
+
+        return set;
+    }
+
     public boolean conflictsWith(Coupon other)
     {
         Set<Long> set = new HashSet<>(getProductIdSet());
@@ -110,14 +121,6 @@ public class Coupon
 
         return set.isEmpty();
     }
-
-    public final Predicate<Set<Long>> canBeRedeemed = new Predicate<Set<Long>>() {
-        @Override
-        public boolean test(Set<Long> longs)
-        {
-            return canBeAppliedToShoppingSet(longs);
-        }
-    };
 
     @Override
     public boolean equals(Object o)
@@ -137,7 +140,7 @@ public class Coupon
     @Override
     public String toString()
     {
-        return "Coupon{" + "id=" + id + ", discount=" + discount + '}';
+        return "Coupon{" + "id=" + id + ", discount=" + String.format("%01.2f", discount) + '}';
     }
 
     public ContentValues toContentValues()
@@ -167,6 +170,7 @@ public class Coupon
         return values;
     }
 
+    @NonNull
     public static Coupon fromCursor(Cursor cursor)
     {
         return new Coupon(
