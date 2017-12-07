@@ -25,6 +25,8 @@ import java.util.Set;
 
 public class ShoppingActivity extends AppCompatActivity
 {
+    private static final String LOG_TAG = ShoppingActivity.class.getSimpleName();
+
     private TextView mLogTextView;
 
     private EditText mBudgetEditText;
@@ -40,8 +42,6 @@ public class ShoppingActivity extends AppCompatActivity
     private SQLiteDatabase mDb;
 
     private List<Coupon> mCoupons;
-
-    private static final String LOG_TAG = ShoppingActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -131,38 +131,6 @@ public class ShoppingActivity extends AppCompatActivity
         loadProductData();
     }
 
-    private Set<Set<Integer>> generatePowerSet(int size)
-    {
-        Set<Set<Integer>> powerSet = new HashSet<>();
-        for (int i = 0; i < size; i++) {
-            Set<Set<Integer>> temp = new HashSet<>();
-            Set<Integer> s = new HashSet<>();
-            s.add(i);
-            temp.add(s);
-
-            for (int j = i + 1; j < size; j++) {
-                temp.addAll(unionAll(temp, j));
-            }
-
-            powerSet.addAll(temp);
-        }
-
-        return powerSet;
-    }
-
-    private List<Set<Integer>> unionAll(Set<Set<Integer>> setOfSets, int i)
-    {
-        List<Set<Integer>> sets = new ArrayList<>();
-
-        for (Set<Integer> s : setOfSets) {
-            Set<Integer> temp = new HashSet<>(s);
-            temp.add(i);
-            sets.add(temp);
-        }
-
-        return sets;
-    }
-
     private void generateBestPriceForProductsUsingCoupons(
         List<Product> products,
         List<Coupon> coupons,
@@ -243,6 +211,38 @@ public class ShoppingActivity extends AppCompatActivity
         }
     }
 
+    private Set<Set<Integer>> generatePowerSet(int size)
+    {
+        Set<Set<Integer>> powerSet = new HashSet<>();
+        for (int i = 0; i < size; i++) {
+            Set<Set<Integer>> temp = new HashSet<>();
+            Set<Integer> s = new HashSet<>();
+            s.add(i);
+            temp.add(s);
+
+            for (int j = i + 1; j < size; j++) {
+                temp.addAll(unionAll(temp, j));
+            }
+
+            powerSet.addAll(temp);
+        }
+
+        return powerSet;
+    }
+
+    private List<Set<Integer>> unionAll(Set<Set<Integer>> setOfSets, int i)
+    {
+        List<Set<Integer>> sets = new ArrayList<>();
+
+        for (Set<Integer> s : setOfSets) {
+            Set<Integer> temp = new HashSet<>(s);
+            temp.add(i);
+            sets.add(temp);
+        }
+
+        return sets;
+    }
+
     private List<Coupon> getSubsetOfList(Set<Integer> set, List<Coupon> coupons)
     {
         List<Coupon> list = new ArrayList<>();
@@ -285,21 +285,6 @@ public class ShoppingActivity extends AppCompatActivity
         return total;
     }
 
-    private void resetComponents()
-    {
-        mBudgetEditText.setText("");
-    }
-
-    private Set<Long> convertProductsToIdSet(List<Product> products)
-    {
-        Set<Long> set = new HashSet<>();
-        for (Product p : products) {
-            set.add(p.getId());
-        }
-
-        return set;
-    }
-
     private List<Coupon> filterCouponsByDesiredProducts(
         List<Coupon> coupons,
         List<Product> products)
@@ -316,17 +301,14 @@ public class ShoppingActivity extends AppCompatActivity
         return selection;
     }
 
-    private Cursor getAllCouponsCursor()
+    private Set<Long> convertProductsToIdSet(List<Product> products)
     {
-        return mDb.query(
-            ShoppoContract.CouponEntry.TABLE_NAME,
-            null,
-            null,
-            null,
-            null,
-            null,
-            ShoppoContract.CouponEntry._ID
-        );
+        Set<Long> set = new HashSet<>();
+        for (Product p : products) {
+            set.add(p.getId());
+        }
+
+        return set;
     }
 
     private List<Coupon> getAllCouponsList()
@@ -355,9 +337,17 @@ public class ShoppingActivity extends AppCompatActivity
         return list;
     }
 
-    private void loadProductData()
+    private Cursor getAllCouponsCursor()
     {
-        mProductsAdapter.swapCursor(getAllProductsCursor());
+        return mDb.query(
+            ShoppoContract.CouponEntry.TABLE_NAME,
+            null,
+            null,
+            null,
+            null,
+            null,
+            ShoppoContract.CouponEntry._ID
+        );
     }
 
     private Cursor getProductsByCouponId(long id)
@@ -379,6 +369,38 @@ public class ShoppingActivity extends AppCompatActivity
         );
     }
 
+    private void loadProductData()
+    {
+        mProductsAdapter.swapCursor(getAllProductsCursor());
+    }
+
+    private Cursor getAllProductsCursor()
+    {
+        return mDb.query(
+            ShoppoContract.ProductEntry.TABLE_NAME,
+            null,
+            null,
+            null,
+            null,
+            null,
+            ShoppoContract.ProductEntry._ID
+        );
+    }
+
+    private List<Product> getAllProductsWithCouponList()
+    {
+        List<Product> list = new ArrayList<>();
+
+        Cursor cursor = getAllProductsWithCouponCursor();
+        while (cursor.moveToNext()) {
+            list.add(Product.fromCursor(cursor));
+        }
+
+        cursor.close();
+
+        return list;
+    }
+
     private Cursor getAllProductsWithCouponCursor()
     {
         String sql = String.format(
@@ -397,30 +419,8 @@ public class ShoppingActivity extends AppCompatActivity
         );
     }
 
-    private List<Product> getAllProductsWithCouponList()
+    private void resetComponents()
     {
-        List<Product> list = new ArrayList<>();
-
-        Cursor cursor = getAllProductsWithCouponCursor();
-        while (cursor.moveToNext()) {
-            list.add(Product.fromCursor(cursor));
-        }
-
-        cursor.close();
-
-        return list;
-    }
-
-    private Cursor getAllProductsCursor()
-    {
-        return mDb.query(
-            ShoppoContract.ProductEntry.TABLE_NAME,
-            null,
-            null,
-            null,
-            null,
-            null,
-            ShoppoContract.ProductEntry._ID
-        );
+        mBudgetEditText.setText("");
     }
 }
